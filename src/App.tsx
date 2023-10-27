@@ -1,13 +1,13 @@
-import {LuCalendarDays} from 'react-icons/lu'
-import {AppointmentT, SortOptionsT} from './types'
-import {useEffect, useState} from 'react'
+import { LuCalendarDays } from 'react-icons/lu'
+import { AppointmentT, SortOptionsT } from './types'
+import { useEffect, useState } from 'react'
 import Form from './Form'
 import SearchSort from './components/Search'
 import Appointment from './components/Appointment'
-import {ToastContainer, toast} from 'react-toastify'
+import { ToastContainer, toast } from 'react-toastify'
 function App() {
 	const [data, setData] = useState<AppointmentT[]>([])
-	
+	const [{orderBy,orderDir}, setSort] = useState<SortOptionsT>({ orderBy: 'petName', orderDir: 'asc' })
 
 	useEffect(() => {
 		fetch('/apps.json')
@@ -15,7 +15,7 @@ function App() {
 			.then((data) => setData(data))
 	}, [])
 
-	const search = (query:string) => {
+	const search = (query: string) => {
 		fetch('/apps.json')
 			.then((res) => res.json())
 			.then((data) => {
@@ -39,12 +39,6 @@ function App() {
 		toast.warn('Appointment deleted succussfully')
 	}
 
-	function sort({orderBy,orderDir}: SortOptionsT): void {
-
-			setData([...data.sort((a, b) => {
-				return (orderDir === 'asc' ? 1 : -1) * (a[orderBy] < b[orderBy] ? -1 : 1)
-			})])
-	}
 
 	return (
 		<>
@@ -67,13 +61,12 @@ function App() {
 					<Form addApp={addAppointment} />
 				</div>
 				<div>
-					<SearchSort change={(e) => search(e.target.value)} sortChange={sort} />
+					<SearchSort change={(e) => search(e.target.value)} sortChange={(options) => setSort(options)} sort={{orderBy,orderDir}} />
 				</div>
 				<div>
 					{data
-						.filter((item) => {
-							/// @TODO: return {fileter}
-							return true
+						.sort((a, b) => {
+							return (orderDir === 'asc' ? 1 : -1) * (a[orderBy].toLowerCase() < b[orderBy].toLowerCase() ? -1 : 1)
 						})
 						.map((item, index) => (
 							<Appointment key={index} appointment={item} onDelete={deleteAppointment} />

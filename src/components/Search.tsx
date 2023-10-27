@@ -5,11 +5,11 @@ import { SortOptionsT } from '../types'
 type PropsT = {
 	change: React.ChangeEventHandler<HTMLInputElement>
 	sortChange: (options: SortOptionsT) => void
+	sort: SortOptionsT
 }
 
-const SearchSort: React.FC<PropsT> = ({ change, sortChange }) => {
+const SearchSort: React.FC<PropsT> = ({ change, sortChange,sort }) => {
 	const [sortOpen, setSortOpen] = useState<boolean>(false)
-	const [sort, setSort] = useState<SortOptionsT>({ orderBy: 'petName', orderDir: 'asc' })
 	useEffect(()=>{
 		console.log(sort);
 		
@@ -40,7 +40,7 @@ const SearchSort: React.FC<PropsT> = ({ change, sortChange }) => {
 										hidden
 										checked={sort.orderBy === 'petName'}
 										name="sort"
-										onChange={(e) => setSort({ ...sort, orderBy: 'petName' })}
+										onChange={(e) => sortChange({ ...sort, orderBy: 'petName' })}
 									/>
 									<BsCheck className="invisible peer-checked/pet:visible" />
 									<span className="">Pet Name</span>
@@ -52,7 +52,7 @@ const SearchSort: React.FC<PropsT> = ({ change, sortChange }) => {
 										hidden
 										checked={sort.orderBy === 'ownerName'}
 										name="sort"
-										onChange={(e) => setSort({ ...sort, orderBy: 'ownerName' })}
+										onChange={(e) => sortChange({ ...sort, orderBy: 'ownerName' })}
 									/>
 									<BsCheck className="invisible peer-checked/owner:visible" />
 									<span className="">Owner Name</span>
@@ -64,7 +64,7 @@ const SearchSort: React.FC<PropsT> = ({ change, sortChange }) => {
 										hidden
 										checked={sort.orderBy === 'aptDate'}
 										name="sort"
-										onChange={(e) => setSort({ ...sort, orderBy: 'aptDate' })}
+										onChange={(e) => sortChange({ ...sort, orderBy: 'aptDate' })}
 									/>
 									<BsCheck className="invisible peer-checked/date:visible" />
 									<span className="">Date</span>
@@ -77,7 +77,7 @@ const SearchSort: React.FC<PropsT> = ({ change, sortChange }) => {
 										hidden
 										name="order"
 										checked={sort.orderDir === 'asc'}
-										onChange={() => setSort({ ...sort, orderDir: 'asc' })}
+										onChange={() => sortChange({ ...sort, orderDir: 'asc' })}
 									/>
 									<BsCheck className="invisible peer-checked/asc:visible" />
 									<span className="">Ascending</span>
@@ -89,7 +89,7 @@ const SearchSort: React.FC<PropsT> = ({ change, sortChange }) => {
 										hidden
 										name="order"
 										checked={sort.orderDir === 'desc'}
-										onChange={(e) => setSort({ ...sort, orderDir: 'desc' })}
+										onChange={(e) => sortChange({ ...sort, orderDir: 'desc' })}
 									/>
 									<BsCheck className="invisible peer-checked/desc:visible" />
 									<span className="">Descending</span>
