@@ -7,6 +7,7 @@ import Appointment from './components/Appointment'
 import { ToastContainer, toast } from 'react-toastify'
 function App() {
 	const [data, setData] = useState<AppointmentT[]>([])
+	const [query, setQuery] = useState<string>("")
 	const [{orderBy,orderDir}, setSort] = useState<SortOptionsT>({ orderBy: 'petName', orderDir: 'asc' })
 
 	useEffect(() => {
@@ -15,19 +16,7 @@ function App() {
 			.then((data) => setData(data))
 	}, [])
 
-	const search = (query: string) => {
-		fetch('/apps.json')
-			.then((res) => res.json())
-			.then((data) => {
-				setData(
-					data.filter(
-						(item: AppointmentT) =>
-							item.petName.toLowerCase().includes(query.toLowerCase()) ||
-							item.ownerName.toLowerCase().includes(query.toLowerCase())
-					)
-				)
-			})
-	}
+
 
 	const addAppointment = (newAppointment: AppointmentT) => {
 		setData([...data, newAppointment])
@@ -61,13 +50,18 @@ function App() {
 					<Form addApp={addAppointment} />
 				</div>
 				<div>
-					<SearchSort change={(e) => search(e.target.value)} sortChange={(options) => setSort(options)} sort={{orderBy,orderDir}} />
+					<SearchSort change={(e) => setQuery(e.target.value)} sortChange={(options) => setSort(options)} sort={{orderBy,orderDir}} />
 				</div>
 				<div>
 					{data
 						.sort((a, b) => {
 							return (orderDir === 'asc' ? 1 : -1) * (a[orderBy].toLowerCase() < b[orderBy].toLowerCase() ? -1 : 1)
 						})
+						.filter(
+							(item: AppointmentT) =>
+								item.petName.toLowerCase().includes(query.toLowerCase()) ||
+								item.ownerName.toLowerCase().includes(query.toLowerCase())
+						)
 						.map((item, index) => (
 							<Appointment key={index} appointment={item} onDelete={deleteAppointment} />
 						))}
